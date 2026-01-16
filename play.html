@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝贝罚我超甜转盘</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "微软雅黑", sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .wheel-table {
+            width: 450px;
+            height: 450px;
+            border-collapse: collapse;
+            border: 2px solid #333;
+            background-color: white;
+            margin-bottom: 30px;
+        }
+        .wheel-table td {
+            border: 2px solid transparent;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            background-color: #fff;
+            transition: all 0.3s;
+        }
+        .wheel-table td.active {
+            background-color: #ffcccc;
+            border-color: #e74c3c;
+        }
+        .center-cell {
+            background: transparent;
+            border: 1px solid #999 !important;
+        }
+        .spin-btn {
+            width: 150px;
+            height: 50px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .spin-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">🥵 宝贝罚我超甜转盘 🥵</div>
+    <table class="wheel-table" id="wheelTable">
+        <tr>
+            <td>罚我亲你锁骨到耳根</td>
+            <td>罚我抱着你蹭10分钟</td>
+            <td>罚我咬你耳垂说情话</td>
+            <td>罚我帮你脱鞋子捏脚</td>
+        </tr>
+        <tr>
+            <td>罚我盯着你眼睛吻30秒</td>
+            <td rowspan="3" colspan="2" class="center-cell"></td>
+            <td>罚我给你暖手暖到热</td>
+        </tr>
+        <tr>
+            <td>罚我躺好任你欺负</td>
+            <td>罚我喊你主人不许停</td>
+        </tr>
+        <tr>
+            <td>再转一次加码罚</td>
+            <td>罚我喂你吃草莓尖尖</td>
+        </tr>
+        <tr>
+            <td>罚我陪你洗香香</td>
+            <td>罚我夸你好看10分钟</td>
+            <td>罚我抱着你讲色色小故事</td>
+            <td>罚我给你揉腰揉到舒服</td>
+        </tr>
+    </table>
+    <button class="spin-btn" id="spinBtn">🔄 宝贝来罚我</button>
+
+    <script>
+        const cells = [
+            document.querySelector('tr:nth-child(1) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(3)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(2) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(4) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(3)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(4) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(2) td:nth-child(1)')
+        ].filter(cell => cell !== null);
+
+        const spinBtn = document.getElementById('spinBtn');
+        let isSpinning = false;
+
+        spinBtn.disabled = false;
+        spinBtn.style.backgroundColor = '#e74c3c';
+
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning || cells.length === 0) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
+            spinBtn.style.backgroundColor = '#bdc3c7';
+
+            cells.forEach(cell => cell.classList.remove('active'));
+
+            const finalIndex = Math.floor(Math.random() * cells.length);
+            let currentIndex = 0;
+            let step = 0;
+            const totalSteps = 80;
+            let speed = 100;
+            const maxSpeed = 900;
+            const acceleration = 18;
+
+            const interval = setInterval(() => {
+                cells.forEach(cell => cell.classList.remove('active'));
+                cells[currentIndex].classList.add('active');
+                currentIndex = (currentIndex + 1) % cells.length;
+                step++;
+
+                if (step > totalSteps * 0.3) speed = Math.min(speed + acceleration, maxSpeed);
+
+                if (step >= totalSteps) {
+                    clearInterval(interval);
+                    cells.forEach(cell => cell.classList.remove('active'));
+                    cells[finalIndex].classList.add('active');
+                    setTimeout(() => {
+                        alert(`🎰 宝贝惩罚结果：${cells[finalIndex].textContent}`);
+                        cells.forEach(cell => cell.classList.remove('active'));
+                        cells[finalIndex].classList.add('active');
+                    }, 100);
+                    isSpinning = false;
+                    spinBtn.disabled = false;
+                    spinBtn.style.backgroundColor = '#e74c3c';
+                }
+            }, speed);
+        });
+    </script>
+</body>
+</html>
