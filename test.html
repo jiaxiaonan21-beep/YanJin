@@ -25,13 +25,21 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        /* 外层容器允许横向滚动（以防仍超出屏幕） */
+        .table-wrap {
+            width: 100%;
+            max-width: 450px;
+            overflow-x: auto;
+        }
         .wheel-table {
-            width: 450px;
+            width: 100%;
+            max-width: 450px;
             height: 450px;
             border-collapse: collapse;
             border: 2px solid #333;
             background-color: white;
             margin-bottom: 30px;
+            table-layout: fixed; /* 固定列宽，方便 padding 生效 */
         }
         .wheel-table td {
             border: 2px solid transparent;
@@ -41,6 +49,17 @@
             color: #333;
             background-color: #fff;
             transition: all 0.3s;
+            padding: 10px 8px; /* 增加内边距，避免文字被裁切 */
+            white-space: normal; /* 允许换行 */
+            word-break: break-word;
+            vertical-align: middle;
+        }
+        /* 首尾列再稍微增加左右内边距，避免被边框裁剪 */
+        .wheel-table td:first-child {
+            padding-left: 14px;
+        }
+        .wheel-table td:last-child {
+            padding-right: 14px;
         }
         .wheel-table td.active {
             background-color: #ffcccc;
@@ -65,37 +84,49 @@
             background-color: #bdc3c7;
             cursor: not-allowed;
         }
+
+        /* 小屏幕优化 */
+        @media (max-width: 420px) {
+            .title { font-size: 20px; }
+            .wheel-table { height: auto; } /* 高度自适应，防止内容被挤压 */
+            .wheel-table td { font-size: 13px; padding: 8px 6px; }
+            .wheel-table td:first-child { padding-left: 10px; }
+            .wheel-table td:last-child { padding-right: 10px; }
+            .spin-btn { width: 140px; height: 44px; font-size: 15px; }
+        }
     </style>
 </head>
 <body>
     <div class="title">🎀 YanJin犯错惩罚转盘 🎀</div>
-    <table class="wheel-table" id="wheelTable">
-        <tr>
-            <td>给男朋友买奶茶</td>
-            <td>给男朋友口</td>
-            <td>给男朋友亲亲</td>
-            <td>穿性感衣服勾引男朋友</td>
-        </tr>
-        <tr>
-            <td>自己拉丝给男朋友看</td>
-            <td rowspan="3" colspan="2" class="center-cell"></td>
-            <td>转账520</td>
-        </tr>
-        <tr>
-            <td>自己用玩具给男朋友看</td>
-            <td>给男朋友打屁股</td>
-        </tr>
-        <tr>
-            <td>再转一次</td>
-            <td>叫爸爸</td>
-        </tr>
-        <tr>
-            <td>陪男朋友玩游戏</td>
-            <td>给男朋友摸下boobs</td>
-            <td>喊男朋友一声老公</td>
-            <td>给男朋友撒娇</td>
-        </tr>
-    </table>
+    <div class="table-wrap">
+        <table class="wheel-table" id="wheelTable">
+            <tr>
+                <td>给男朋友买奶茶</td>
+                <td>给男朋友口</td>
+                <td>给男朋友亲亲</td>
+                <td>穿性感衣服勾引男朋友</td>
+            </tr>
+            <tr>
+                <td>自己拉丝给男朋友看</td>
+                <td rowspan="3" colspan="2" class="center-cell"></td>
+                <td>转账520</td>
+            </tr>
+            <tr>
+                <td>自己用玩具给男朋友看</td>
+                <td>给男朋友打屁股</td>
+            </tr>
+            <tr>
+                <td>再转一次</td>
+                <td>叫爸爸</td>
+            </tr>
+            <tr>
+                <td>陪男朋友玩游戏</td>
+                <td>给男朋友摸下boobs</td>
+                <td>喊男朋友一声老公</td>
+                <td>给男朋友撒娇</td>
+            </tr>
+        </table>
+    </div>
     <button class="spin-btn" id="spinBtn">🔄 开始转盘</button>
 
     <script>
