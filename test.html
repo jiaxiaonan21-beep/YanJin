@@ -77,13 +77,13 @@
             <td>穿性感衣服勾引男朋友</td>
         </tr>
         <tr>
-            <td>请男朋友看电影</td>
+            <td>自己拉丝给男朋友看</td>
             <td rowspan="3" colspan="2" class="center-cell"></td>
             <td>转账520</td>
         </tr>
         <tr>
-            <td>买新鞋子</td>
-            <td>买新衣服</td>
+            <td>自己用玩具给男朋友看</td>
+            <td>给男朋友打屁股</td>
         </tr>
         <tr>
             <td>再转一次</td>
@@ -99,26 +99,21 @@
     <button class="spin-btn" id="spinBtn">🔄 开始转盘</button>
 
     <script>
-        // 🔴 核心修复：选择器和新表格结构完全匹配
         const cells = [
-            // 第一行：左→右
-            document.querySelector('tr:nth-child(1) td:nth-child(1)'), // 给男朋友买奶茶
-            document.querySelector('tr:nth-child(1) td:nth-child(2)'), // 给男朋友口
-            document.querySelector('tr:nth-child(1) td:nth-child(3)'), // 给男朋友亲亲
-            document.querySelector('tr:nth-child(1) td:nth-child(4)'), // 穿性感衣服勾引男朋友
-            // 最后一列：上→下
-            document.querySelector('tr:nth-child(2) td:nth-child(4)'), // 转账520
-            document.querySelector('tr:nth-child(3) td:nth-child(2)'), // 买新衣服
-            document.querySelector('tr:nth-child(4) td:nth-child(2)'), // 叫爸爸
-            document.querySelector('tr:nth-child(5) td:nth-child(4)'), // 给男朋友撒娇
-            // 最后一行：右→左
-            document.querySelector('tr:nth-child(5) td:nth-child(3)'), // 喊我一声老公
-            document.querySelector('tr:nth-child(5) td:nth-child(2)'), // 给男朋友摸下boobs
-            document.querySelector('tr:nth-child(5) td:nth-child(1)'), // 陪男朋友玩游戏
-            // 第一列：下→上
-            document.querySelector('tr:nth-child(4) td:nth-child(1)'), // 再转一次
-            document.querySelector('tr:nth-child(3) td:nth-child(1)'), // 买新鞋子
-            document.querySelector('tr:nth-child(2) td:nth-child(1)')  // 请男朋友看电影
+            document.querySelector('tr:nth-child(1) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(3)'),
+            document.querySelector('tr:nth-child(1) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(2) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(4) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(3)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(5) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(4) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(1)'),
+            document.querySelector('tr:nth-child(2) td:nth-child(1)')
         ].filter(cell => cell !== null);
 
         const spinBtn = document.getElementById('spinBtn');
@@ -135,39 +130,38 @@
 
             cells.forEach(cell => cell.classList.remove('active'));
 
-            let currentIndex = 0;
-            let speed = 120;
-            const maxSpeed = 800;
-            const acceleration = 15;
-            const totalSteps = 60;
-            let step = 0;
             const finalIndex = Math.floor(Math.random() * cells.length);
+            let currentIndex = 0;
+            let step = 0;
+            const totalSteps = 80;
+            let speed = 100;
+            const maxSpeed = 900;
+            const acceleration = 18;
 
             const interval = setInterval(() => {
                 cells.forEach(cell => cell.classList.remove('active'));
                 cells[currentIndex].classList.add('active');
-
                 currentIndex = (currentIndex + 1) % cells.length;
                 step++;
 
-                if (step > totalSteps * 0.4) {
-                    speed = Math.min(speed + acceleration, maxSpeed);
-                }
-
-                // 最后一步直接定位到最终结果
-                if (step >= totalSteps - 1) {
-                    currentIndex = finalIndex;
-                }
+                if (step > totalSteps * 0.3) speed = Math.min(speed + acceleration, maxSpeed);
 
                 if (step >= totalSteps) {
                     clearInterval(interval);
-                    // 确保最终高亮和弹窗结果完全一致
+                    // 1. 强制高亮最终结果
                     cells.forEach(cell => cell.classList.remove('active'));
                     cells[finalIndex].classList.add('active');
+                    // 2. 弹窗，并且在弹窗关闭后重新高亮（关键修复）
+                    setTimeout(() => {
+                        alert(`🎰 惩罚结果：${cells[finalIndex].textContent}`);
+                        // 弹窗关闭后，重新高亮结果单元格
+                        cells.forEach(cell => cell.classList.remove('active'));
+                        cells[finalIndex].classList.add('active');
+                    }, 100);
+                    // 3. 重置按钮状态
                     isSpinning = false;
                     spinBtn.disabled = false;
                     spinBtn.style.backgroundColor = '#e74c3c';
-                    alert(`🎰 惩罚结果：${cells[finalIndex].textContent}`);
                 }
             }, speed);
         });
