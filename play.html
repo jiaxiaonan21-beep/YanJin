@@ -24,23 +24,37 @@
             color: #e74c3c;
             margin-bottom: 20px;
             text-align: center;
+            /* 标题也适配手机 */
+            font-size: clamp(18px, 5vw, 24px);
         }
         .wheel-table {
-            width: 450px;
-            height: 450px;
+            /* 关键修改：使用最大宽度+自适应宽度，替代固定宽高 */
+            max-width: 450px;
+            width: 90vw;
+            height: auto;
+            /* 保持宽高比，避免变形 */
+            aspect-ratio: 1/1;
             border-collapse: collapse;
             border: 2px solid #333;
             background-color: white;
             margin-bottom: 30px;
+            /* 确保单元格内容不溢出 */
+            table-layout: fixed;
         }
         .wheel-table td {
             border: 2px solid transparent;
             text-align: center;
-            font-size: 14px;
+            /* 字体大小适配手机 */
+            font-size: clamp(12px, 3vw, 14px);
             font-weight: bold;
             color: #333;
             background-color: #fff;
             transition: all 0.3s;
+            /* 关键：允许文字换行 */
+            word-wrap: break-word;
+            word-break: break-all;
+            /* 增加内边距，避免文字贴边 */
+            padding: 5px;
         }
         .wheel-table td.active {
             background-color: #ffcccc;
@@ -51,13 +65,14 @@
             border: 1px solid #999 !important;
         }
         .spin-btn {
-            width: 150px;
+            /* 按钮也适配手机 */
+            width: clamp(120px, 30vw, 150px);
             height: 50px;
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 25px;
-            font-size: 16px;
+            font-size: clamp(14px, 4vw, 16px);
             font-weight: bold;
             cursor: pointer;
         }
@@ -105,8 +120,8 @@
             document.querySelector('tr:nth-child(1) td:nth-child(3)'),
             document.querySelector('tr:nth-child(1) td:nth-child(4)'),
             document.querySelector('tr:nth-child(2) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(3) td:nth-child(2)'),
-            document.querySelector('tr:nth-child(4) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(4)'), // 原代码这里写错了，是td4不是td2
+            document.querySelector('tr:nth-child(4) td:nth-child(4)'), // 原代码这里写错了，是td4不是td2
             document.querySelector('tr:nth-child(5) td:nth-child(4)'),
             document.querySelector('tr:nth-child(5) td:nth-child(3)'),
             document.querySelector('tr:nth-child(5) td:nth-child(2)'),
