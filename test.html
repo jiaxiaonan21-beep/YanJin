@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>女朋友犯错惩罚转盘</title>
+    <title>YanJin犯错惩罚转盘</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        html, body {
-            -webkit-text-size-adjust: 100%; /* 防止 iOS 自动放大字体导致布局异常 */
         }
         body {
             font-family: "微软雅黑", sans-serif;
@@ -22,135 +19,174 @@
             padding: 20px;
         }
         .title {
-            font-size: 24px;
+            font-size: clamp(18px, 5vw, 24px);
             font-weight: bold;
-            color: #e74c3c;
+            color: #b32424;
             margin-bottom: 20px;
             text-align: center;
         }
-
-        /* 外层容器允许横向滚动并有左右内边距，防止字符被屏幕边缘/圆角裁切 */
-        .table-wrap {
-            width: 100%;
-            max-width: 450px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
-            padding: 0 12px; /* 关键：增加左右内边距，避免最左/最右字符被裁切 */
-        }
-
-        /* 表格使用响应式宽度（满宽度但限制最大宽度） */
         .wheel-table {
-            width: 100%;
+            /* 关键：自适应宽度+保持正方形 */
             max-width: 450px;
-            height: 450px;
-            border-collapse: separate; /* 改为 separate，避免某些浏览器在 collapse 情况下产生裁切问题 */
-            border-spacing: 0;
-            border: 2px solid #333;
+            width: 90vw;
+            height: auto;
+            aspect-ratio: 1/1;
+            border-collapse: collapse;
+            border: 2px solid #b32424;
             background-color: white;
             margin-bottom: 30px;
-            table-layout: fixed; /* 固定列宽，padding 生效一致 */
-            box-sizing: border-box;
+            table-layout: fixed;
         }
         .wheel-table td {
             border: 2px solid transparent;
             text-align: center;
-            font-size: 14px;
+            /* 字体大小自适应 */
+            font-size: clamp(12px, 3vw, 14px);
             font-weight: bold;
             color: #333;
             background-color: #fff;
             transition: all 0.3s;
-            padding: 12px 10px; /* 增加内边距以避免裁切 */
-            white-space: normal;
-            word-break: break-word;
-            vertical-align: middle;
-            box-sizing: border-box;
-            overflow: visible; /* 确保内容不被强制隐藏 */
-        }
-        /* 首尾列再稍微增加左右内边距，进一步防止被裁剪（尤其是带圆角的屏幕） */
-        .wheel-table td:first-child {
-            padding-left: 18px;
-        }
-        .wheel-table td:last-child {
-            padding-right: 18px;
+            /* 允许文字换行 */
+            word-wrap: break-word;
+            word-break: break-all;
+            /* 增加内边距，避免文字贴边 */
+            padding: 5px;
         }
         .wheel-table td.active {
-            background-color: #ffcccc;
-            border-color: #e74c3c;
+            background-color: #f8d7da;
+            border-color: #b32424;
         }
         .center-cell {
             background: transparent;
             border: 1px solid #999 !important;
         }
         .spin-btn {
-            width: 150px;
+            width: clamp(120px, 30vw, 180px);
             height: 50px;
-            background-color: #e74c3c;
+            background-color: #b32424;
             color: white;
             border: none;
             border-radius: 25px;
-            font-size: 16px;
+            font-size: clamp(14px, 4vw, 16px);
             font-weight: bold;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .spin-btn:disabled {
             background-color: #bdc3c7;
             cursor: not-allowed;
         }
-
-        /* 小屏幕优化 */
-        @media (max-width: 420px) {
-            .title { font-size: 20px; }
-            .wheel-table { height: auto; } /* 防止高度固定在窄屏时挤压文字 */
-            .wheel-table td { font-size: 13px; padding: 10px 8px; }
-            .wheel-table td:first-child { padding-left: 14px; }
-            .wheel-table td:last-child { padding-right: 14px; }
-            .spin-btn { width: 140px; height: 44px; font-size: 15px; }
+        /* 自定义弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 350px;
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #f5f5f5;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+        .modal-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        .modal-footer button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div class="title">🎀 YanJin犯错惩罚转盘 🎀</div>
-    <div class="table-wrap">
-        <table class="wheel-table" id="wheelTable">
-            <tr>
-                <td>给男朋友买奶茶</td>
-                <td>给男朋友口</td>
-                <td>给男朋友亲亲</td>
-                <td>穿性感衣服勾引男朋友</td>
-            </tr>
-            <tr>
-                <td>自己拉丝给男朋友看</td>
-                <td rowspan="3" colspan="2" class="center-cell"></td>
-                <td>转账520</td>
-            </tr>
-            <tr>
-                <td>自己用玩具给男朋友看</td>
-                <td>给男朋友打屁股</td>
-            </tr>
-            <tr>
-                <td>再转一次</td>
-                <td>叫爸爸</td>
-            </tr>
-            <tr>
-                <td>陪男朋友玩游戏</td>
-                <td>给男朋友摸下boobs</td>
-                <td>喊男朋友一声老公</td>
-                <td>给男朋友撒娇</td>
-            </tr>
-        </table>
-    </div>
+    <table class="wheel-table" id="wheelTable">
+        <tr>
+            <td>给男朋友买奶茶</td>
+            <td>给男朋友口</td>
+            <td>给男朋友亲亲</td>
+            <td>穿性感衣服勾引男朋友</td>
+        </tr>
+        <tr>
+            <td>巴拉丝给男朋友看</td>
+            <td rowspan="3" colspan="2" class="center-cell"></td>
+            <td>转账520</td>
+        </tr>
+        <tr>
+            <td>已用玩具给男朋友看</td>
+            <td>给男朋友打屁股</td>
+        </tr>
+        <tr>
+            <td>再转一次</td>
+            <td>叫爸爸</td>
+        </tr>
+        <tr>
+            <td>陪男朋友玩游戏</td>
+            <td>给男朋友摸下boobs</td>
+            <td>喊男朋友一声老公</td>
+            <td>给男朋友撒娇</td>
+        </tr>
+    </table>
     <button class="spin-btn" id="spinBtn">🔄 开始转盘</button>
 
+    <!-- 自定义弹窗 -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">jiaxiaonan21-beep.github.io</div>
+            <div class="modal-body">🎰 惩罚结果：<span id="resultText"></span></div>
+            <div class="modal-footer">
+                <button id="modalOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 原 JS 保留不变（仅为演示）
         const cells = [
             document.querySelector('tr:nth-child(1) td:nth-child(1)'),
             document.querySelector('tr:nth-child(1) td:nth-child(2)'),
             document.querySelector('tr:nth-child(1) td:nth-child(3)'),
             document.querySelector('tr:nth-child(1) td:nth-child(4)'),
             document.querySelector('tr:nth-child(2) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(3) td:nth-child(2)'),
-            document.querySelector('tr:nth-child(4) td:nth-child(2)'),
+            document.querySelector('tr:nth-child(3) td:nth-child(4)'),
+            document.querySelector('tr:nth-child(4) td:nth-child(4)'),
             document.querySelector('tr:nth-child(5) td:nth-child(4)'),
             document.querySelector('tr:nth-child(5) td:nth-child(3)'),
             document.querySelector('tr:nth-child(5) td:nth-child(2)'),
@@ -161,10 +197,13 @@
         ].filter(cell => cell !== null);
 
         const spinBtn = document.getElementById('spinBtn');
+        const resultModal = document.getElementById('resultModal');
+        const resultText = document.getElementById('resultText');
+        const modalOkBtn = document.getElementById('modalOkBtn');
         let isSpinning = false;
 
         spinBtn.disabled = false;
-        spinBtn.style.backgroundColor = '#e74c3c';
+        spinBtn.style.backgroundColor = '#b32424';
 
         spinBtn.addEventListener('click', () => {
             if (isSpinning || cells.length === 0) return;
@@ -192,22 +231,21 @@
 
                 if (step >= totalSteps) {
                     clearInterval(interval);
-                    // 1. 强制高亮最终结果
                     cells.forEach(cell => cell.classList.remove('active'));
                     cells[finalIndex].classList.add('active');
-                    // 2. 弹窗，并且在弹窗关闭后重新高亮（关键修复）
                     setTimeout(() => {
-                        alert(`🎰 惩罚结果：${cells[finalIndex].textContent}`);
-                        // 弹窗关闭后，重新高亮结果单元格
-                        cells.forEach(cell => cell.classList.remove('active'));
-                        cells[finalIndex].classList.add('active');
+                        resultText.textContent = cells[finalIndex].textContent;
+                        resultModal.classList.add('show');
                     }, 100);
-                    // 3. 重置按钮状态
                     isSpinning = false;
                     spinBtn.disabled = false;
-                    spinBtn.style.backgroundColor = '#e74c3c';
+                    spinBtn.style.backgroundColor = '#b32424';
                 }
             }, speed);
+        });
+
+        modalOkBtn.addEventListener('click', () => {
+            resultModal.classList.remove('show');
         });
     </script>
 </body>
