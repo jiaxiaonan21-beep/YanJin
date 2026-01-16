@@ -10,6 +10,9 @@
             padding: 0;
             box-sizing: border-box;
         }
+        html, body {
+            -webkit-text-size-adjust: 100%; /* 防止 iOS 自动放大字体导致布局异常 */
+        }
         body {
             font-family: "微软雅黑", sans-serif;
             background-color: #f5f5f5;
@@ -25,21 +28,28 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        /* 外层容器允许横向滚动（以防仍超出屏幕） */
+
+        /* 外层容器允许横向滚动并有左右内边距，防止字符被屏幕边缘/圆角裁切 */
         .table-wrap {
             width: 100%;
             max-width: 450px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+            padding: 0 12px; /* 关键：增加左右内边距，避免最左/最右字符被裁切 */
         }
+
+        /* 表格使用响应式宽度（满宽度但限制最大宽度） */
         .wheel-table {
             width: 100%;
             max-width: 450px;
             height: 450px;
-            border-collapse: collapse;
+            border-collapse: separate; /* 改为 separate，避免某些浏览器在 collapse 情况下产生裁切问题 */
+            border-spacing: 0;
             border: 2px solid #333;
             background-color: white;
             margin-bottom: 30px;
-            table-layout: fixed; /* 固定列宽，方便 padding 生效 */
+            table-layout: fixed; /* 固定列宽，padding 生效一致 */
+            box-sizing: border-box;
         }
         .wheel-table td {
             border: 2px solid transparent;
@@ -49,17 +59,19 @@
             color: #333;
             background-color: #fff;
             transition: all 0.3s;
-            padding: 10px 8px; /* 增加内边距，避免文字被裁切 */
-            white-space: normal; /* 允许换行 */
+            padding: 12px 10px; /* 增加内边距以避免裁切 */
+            white-space: normal;
             word-break: break-word;
             vertical-align: middle;
+            box-sizing: border-box;
+            overflow: visible; /* 确保内容不被强制隐藏 */
         }
-        /* 首尾列再稍微增加左右内边距，避免被边框裁剪 */
+        /* 首尾列再稍微增加左右内边距，进一步防止被裁剪（尤其是带圆角的屏幕） */
         .wheel-table td:first-child {
-            padding-left: 14px;
+            padding-left: 18px;
         }
         .wheel-table td:last-child {
-            padding-right: 14px;
+            padding-right: 18px;
         }
         .wheel-table td.active {
             background-color: #ffcccc;
@@ -88,10 +100,10 @@
         /* 小屏幕优化 */
         @media (max-width: 420px) {
             .title { font-size: 20px; }
-            .wheel-table { height: auto; } /* 高度自适应，防止内容被挤压 */
-            .wheel-table td { font-size: 13px; padding: 8px 6px; }
-            .wheel-table td:first-child { padding-left: 10px; }
-            .wheel-table td:last-child { padding-right: 10px; }
+            .wheel-table { height: auto; } /* 防止高度固定在窄屏时挤压文字 */
+            .wheel-table td { font-size: 13px; padding: 10px 8px; }
+            .wheel-table td:first-child { padding-left: 14px; }
+            .wheel-table td:last-child { padding-right: 14px; }
             .spin-btn { width: 140px; height: 44px; font-size: 15px; }
         }
     </style>
@@ -130,6 +142,7 @@
     <button class="spin-btn" id="spinBtn">🔄 开始转盘</button>
 
     <script>
+        // 原 JS 保留不变（仅为演示）
         const cells = [
             document.querySelector('tr:nth-child(1) td:nth-child(1)'),
             document.querySelector('tr:nth-child(1) td:nth-child(2)'),
