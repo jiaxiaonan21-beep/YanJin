@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YanJin犯错惩罚转盘</title>
+    <title>YanJin犯错惩罚转盘 🎀</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,6 @@
             text-align: center;
         }
         .wheel-table {
-            /* 关键：自适应宽度+保持正方形 */
             max-width: 450px;
             width: 90vw;
             height: auto;
@@ -40,16 +39,13 @@
         .wheel-table td {
             border: 2px solid transparent;
             text-align: center;
-            /* 字体大小自适应 */
             font-size: clamp(12px, 3vw, 14px);
             font-weight: bold;
             color: #333;
             background-color: #fff;
             transition: all 0.3s;
-            /* 允许文字换行 */
             word-wrap: break-word;
             word-break: break-all;
-            /* 增加内边距，避免文字贴边 */
             padding: 5px;
         }
         .wheel-table td.active {
@@ -79,7 +75,6 @@
             background-color: #bdc3c7;
             cursor: not-allowed;
         }
-        /* 自定义弹窗样式 */
         .modal {
             position: fixed;
             top: 0;
@@ -146,16 +141,22 @@
             <td>穿性感衣服勾引男朋友</td>
         </tr>
         <tr>
-            <td>巴拉丝给男朋友看</td>
-            <td rowspan="3" colspan="2" class="center-cell"></td>
+            <td>下面拉丝给男朋友看</td>
+            <td></td>
+            <td></td>
+            <!-- <td rowspan="3" colspan="2" class="center-cell"></td> -->
             <td>转账520</td>
         </tr>
         <tr>
-            <td>已用玩具给男朋友看</td>
+            <td>自己用玩具给男朋友看</td>
+			   <td></td>
+            <td></td>
             <td>给男朋友打屁股</td>
         </tr>
         <tr>
             <td>再转一次</td>
+			   <td></td>
+            <td></td>
             <td>叫爸爸</td>
         </tr>
         <tr>
@@ -167,11 +168,10 @@
     </table>
     <button class="spin-btn" id="spinBtn">🔄 开始转盘</button>
 
-    <!-- 自定义弹窗 -->
     <div class="modal" id="resultModal">
         <div class="modal-content">
-            <div class="modal-header">jiaxiaonan21-beep.github.io</div>
-            <div class="modal-body">🎰 惩罚结果：<span id="resultText"></span></div>
+            <div class="modal-header">惩罚结果</div>
+            <div class="modal-body">🎰 本次惩罚：<span id="resultText"></span></div>
             <div class="modal-footer">
                 <button id="modalOkBtn">OK</button>
             </div>
@@ -179,31 +179,44 @@
     </div>
 
     <script>
-        const cells = [
-            document.querySelector('tr:nth-child(1) td:nth-child(1)'),
-            document.querySelector('tr:nth-child(1) td:nth-child(2)'),
-            document.querySelector('tr:nth-child(1) td:nth-child(3)'),
-            document.querySelector('tr:nth-child(1) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(2) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(3) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(4) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(5) td:nth-child(4)'),
-            document.querySelector('tr:nth-child(5) td:nth-child(3)'),
-            document.querySelector('tr:nth-child(5) td:nth-child(2)'),
-            document.querySelector('tr:nth-child(5) td:nth-child(1)'),
-            document.querySelector('tr:nth-child(4) td:nth-child(1)'),
-            document.querySelector('tr:nth-child(3) td:nth-child(1)'),
-            document.querySelector('tr:nth-child(2) td:nth-child(1)')
-        ].filter(cell => cell !== null);
+const cells = [
+    // 第1行
+    document.querySelector('tr:nth-child(1) td:nth-child(1)'), // 给男朋友买奶茶
+    document.querySelector('tr:nth-child(1) td:nth-child(2)'), // 给男朋友口
+    document.querySelector('tr:nth-child(1) td:nth-child(3)'), // 给男朋友亲亲
+    document.querySelector('tr:nth-child(1) td:nth-child(4)'), // 穿性感衣服勾引男朋友
 
-        const spinBtn = document.getElementById('spinBtn');
-        const resultModal = document.getElementById('resultModal');
-        const resultText = document.getElementById('resultText');
-        const modalOkBtn = document.getElementById('modalOkBtn');
+    // 第2行（跳过合并区域，只取第4列）
+    document.querySelector('tr:nth-child(2) td:nth-child(4)'), // 转账520
+
+    // 第3行（跳过合并区域，只取第4列）
+    document.querySelector('tr:nth-child(3) td:nth-child(4)'), // 给男朋友打屁股
+
+    // 第4行（跳过合并区域，只取第4列）
+    document.querySelector('tr:nth-child(4) td:nth-child(4)'), // 叫爸爸
+
+    // 第5行（完整4列，从右向左）
+    document.querySelector('tr:nth-child(5) td:nth-child(4)'), // 给男朋友撒娇
+    document.querySelector('tr:nth-child(5) td:nth-child(3)'), // 喊男朋友一声老公
+    document.querySelector('tr:nth-child(5) td:nth-child(2)'), // 给男朋友摸下boobs
+    document.querySelector('tr:nth-child(5) td:nth-child(1)'), // 陪男朋友玩游戏
+
+    // 第2-4行左侧列（从下向上）
+    document.querySelector('tr:nth-child(4) td:nth-child(1)'), // 自己用玩具给男朋友看（第4行第1列）
+    document.querySelector('tr:nth-child(3) td:nth-child(1)'), // 下面拉丝给男朋友看（第3行第1列）
+    document.querySelector('tr:nth-child(2) td:nth-child(1)'), // 再转一次（第2行第1列）
+].filter(cell => cell !== null); // 过滤掉 null
+
+console.log("有效单元格数量:", cells.length); // 应该是 12 或 13（取决于是否包含所有）			// 调试输出验证
+			console.log("有效单元格数量:", cells.length);
+			cells.forEach((cell, idx) => {
+				console.log(`单元格${idx+1}: ${cell.textContent}`);
+			});
+             const spinBtn = document.getElementById('spinBtn');
         let isSpinning = false;
 
         spinBtn.disabled = false;
-        spinBtn.style.backgroundColor = '#b32424';
+        spinBtn.style.backgroundColor = '#e74c3c';
 
         spinBtn.addEventListener('click', () => {
             if (isSpinning || cells.length === 0) return;
@@ -234,18 +247,15 @@
                     cells.forEach(cell => cell.classList.remove('active'));
                     cells[finalIndex].classList.add('active');
                     setTimeout(() => {
-                        resultText.textContent = cells[finalIndex].textContent;
-                        resultModal.classList.add('show');
+                        alert(`🎰 宝贝惩罚结果：${cells[finalIndex].textContent}`);
+                        cells.forEach(cell => cell.classList.remove('active'));
+                        cells[finalIndex].classList.add('active');
                     }, 100);
                     isSpinning = false;
                     spinBtn.disabled = false;
-                    spinBtn.style.backgroundColor = '#b32424';
+                    spinBtn.style.backgroundColor = '#e74c3c';
                 }
             }, speed);
-        });
-
-        modalOkBtn.addEventListener('click', () => {
-            resultModal.classList.remove('show');
         });
     </script>
 </body>
