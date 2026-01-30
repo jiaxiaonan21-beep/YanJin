@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YanJin塔罗抽牌</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #1b1b2f, #162447);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 28px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #f5c07a, #e43f5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .desc {
+      font-size: 15px;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .card {
+      aspect-ratio: 2 / 3;
+      background: linear-gradient(135deg, #3a3a6a, #1f4068);
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      transform-style: preserve-3d;
+      transition: transform 0.6s, opacity 0.4s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      perspective: 1000px;
+    }
+    .card:hover {
+      transform: translateY(-8px) rotateY(5deg);
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      box-sizing: border-box;
+      transition: filter 0.3s;
+    }
+    .card-front {
+      background: linear-gradient(135deg, #3a3a6a, #1f4068);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .card-back {
+      background: linear-gradient(135deg, #f5c07a, #d18b47);
+      color: #2b1b0e;
+      font-weight: bold;
+      font-size: 18px;
+      transform: rotateY(180deg);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      line-height: 1.4;
+      padding: 20px;
+    }
+    /* 选中牌的高亮效果 */
+    .card.selected .card-back {
+      background: linear-gradient(135deg, #ffd166, #f5c07a);
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.5);
+      border: 2px solid #ffd166;
+    }
+    /* 未选中牌的暗化效果 */
+    .card:not(.selected).flipped .card-back {
+      filter: brightness(0.7);
+      opacity: 0.7;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 80px;
+      text-align: left;
+      border-left: 3px solid #e43f5a;
+      backdrop-filter: blur(10px);
+    }
+    .result strong {
+      color: #f5c07a;
+      font-size: 18px;
+    }
+    .all-cards {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .all-cards h3 {
+      margin: 0 0 10px 0;
+      font-size: 15px;
+      color: #f5c07a;
+    }
+    .all-cards ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .all-cards li {
+      margin-bottom: 5px;
+    }
+    button {
+      margin-top: 25px;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(90deg, #e43f5a, #ff6b6b);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(228, 63, 90, 0.4);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(228, 63, 90, 0.5);
+    }
+    button:active {
+      transform: translateY(-1px);
+    }
+    @media (max-width: 480px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .desc {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>塔罗抽牌</h1>
+    <div class="desc">请在心中默念你的问题，然后选择一张牌</div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">点击抽牌</div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="all-cards" id="allCards" style="display: none;">
+      <h3>所有卡牌内容：</h3>
+      <ul id="cardsList"></ul>
+    </div>
+    <button id="reset">重新抽牌</button>
+  </div>
+
+  <script>
+    const tarot = [
+      { name: "愚者", text: "新的开始，自由与冒险，顺其自然。" },
+      { name: "魔术师", text: "行动力与掌控力，事情正在你的掌控中。" },
+      { name: "女祭司", text: "直觉、潜意识，答案藏在内心深处。" },
+      { name: "皇后", text: "滋养、关怀，关系或事业正在成长。" },
+      { name: "皇帝", text: "秩序、责任，建立稳定的基础。" },
+      { name: "恋人", text: "选择与关系，跟随内心的真实想法。" },
+      { name: "战车", text: "前进与胜利，坚持将带来成果。" },
+      { name: "力量", text: "温柔的力量，耐心与勇气并存。" },
+      { name: "隐者", text: "独处与思考，寻找内在的指引。" },
+      { name: "命运之轮", text: "命运的转折，变化是不可避免的。" },
+      { name: "正义", text: "公平、平衡，决定带来结果。" },
+      { name: "倒吊人", text: "换位思考，牺牲带来新的视角。" },
+      { name: "死神", text: "结束与新生，放下过去迎接未来。" },
+      { name: "节制", text: "调和、中庸，找到平衡点。" },
+      { name: "恶魔", text: "欲望与束缚，看清表象下的真相。" },
+      { name: "高塔", text: "突然的变化，打破旧有结构。" }
+    ];
+
+    const cards = document.querySelectorAll('.card');
+    const result = document.getElementById('result');
+    const allCardsDiv = document.getElementById('allCards');
+    const cardsList = document.getElementById('cardsList');
+    const resetBtn = document.getElementById('reset');
+
+    let isRevealed = false;
+    let currentDraw = [];
+    let selectedCardIndex = -1;
+
+    // 为每张卡片分配一个随机的塔罗牌
+    function assignTarotCards() {
+      currentDraw = [];
+      const availableTarot = [...tarot];
+      
+      cards.forEach(card => {
+        const randomIndex = Math.floor(Math.random() * availableTarot.length);
+        const tarotCard = availableTarot[randomIndex];
+        const backElement = card.querySelector('.card-back');
+        backElement.textContent = tarotCard.name;
+        backElement.setAttribute('data-text', tarotCard.text);
+        
+        // 保存这张牌的信息
+        currentDraw.push({
+          name: tarotCard.name,
+          text: tarotCard.text
+        });
+        
+        // 移除已选牌，避免重复
+        availableTarot.splice(randomIndex, 1);
+        
+        // 如果牌不够了，重新填充
+        if (availableTarot.length === 0) {
+          availableTarot.push(...tarot);
+        }
+      });
+    }
+
+    // 显示所有卡牌内容
+    function showAllCards() {
+      cardsList.innerHTML = '';
+      currentDraw.forEach((card, index) => {
+        const li = document.createElement('li');
+        if (index === selectedCardIndex) {
+          li.innerHTML = `🎯 <strong style="color:#ffd166">${card.name}</strong>: ${card.text}`;
+        } else {
+          li.innerHTML = `<strong>${card.name}</strong>: ${card.text}`;
+          li.style.opacity = '0.7';
+        }
+        cardsList.appendChild(li);
+      });
+      allCardsDiv.style.display = 'block';
+    }
+
+    // 初始化
+    assignTarotCards();
+
+    cards.forEach((card, index) => {
+      card.addEventListener('click', () => {
+        if (isRevealed) return;
+        
+        isRevealed = true;
+        selectedCardIndex = index;
+        
+        // 标记选中的牌
+        card.classList.add('selected');
+        
+        // 翻转所有卡牌
+        cards.forEach(c => {
+          c.classList.add('flipped');
+        });
+        
+        // 显示结果
+        const backElement = card.querySelector('.card-back');
+        const cardName = backElement.textContent;
+        const cardText = backElement.getAttribute('data-text');
+        result.innerHTML = `你抽到的是 <strong style="color:#ffd166">${cardName}</strong><br>${cardText}`;
+        
+        // 显示所有卡牌内容
+        <!-- showAllCards(); -->
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      isRevealed = false;
+      selectedCardIndex = -1;
+      result.innerHTML = '';
+      allCardsDiv.style.display = 'none';
+      
+      // 移除所有特殊效果
+      cards.forEach(card => {
+        card.classList.remove('flipped');
+        card.classList.remove('selected');
+      });
+      
+      // 重新分配塔罗牌
+      setTimeout(() => {
+        assignTarotCards();
+      }, 300);
+    });
+  </script>
+</body>
+</html>
